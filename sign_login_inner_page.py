@@ -40,36 +40,78 @@ def sign():
             else:
                 print("Invalid email format. Please use format: example@domain.com or example@domain.edu")
         
+        # Password option selection
+        print("\n--- Password Setup ---")
+        print("1. Create your own password")
+        print("2. Generate a secure password automatically")
+        
+        password_choice = None
+        while password_choice not in ["1", "2"]:
+            password_choice = input("Choose option (1 or 2): ").strip()
+            if password_choice not in ["1", "2"]:
+                print("Invalid choice. Please enter 1 or 2.")
+        
         # Password validation loop (separate)
-        while True:
-            password = input("Enter your password: ")
+        if password_choice == "2":
+            # Auto-generate secure password
+            password = ''.join(random.choices(
+                string.ascii_uppercase + string.ascii_lowercase + string.digits + "!@#$%&*", 
+                k=12
+            ))
+            print("\n" + "=" * 50)
+            print("✓ Your secure password has been generated!")
+            print(f"Password: {password}")
+            print("=" * 50)
+            print("⚠️ IMPORTANT: Save this password somewhere safe!")
+            print("You'll need it to login.")
+            print("=" * 50)
+            input("Press Enter after saving your password...")
             
-            # Password strength check
-            if len(password) < 6:
-                print("Password must be at least 6 characters long.")
-                continue
+            # Generate unique username
+            base_username = email.split("@")[0]
+            userName = base_username + ''.join(random.choices(string.ascii_letters + string.digits, k=2))
             
-            confirm_password = input("Confirm your password: ")
-
-            if password == confirm_password:
-                print("Password confirmed ✓")
-                
-                # Generate unique username
-                base_username = email.split("@")[0]
+            # Ensure uniqueness
+            while userName in existing_users:
                 userName = base_username + ''.join(random.choices(string.ascii_letters + string.digits, k=2))
+            
+            writer.writerow({"email": email, "password": password, "userName": userName})
+            print("\n✓ Registration successful!")
+            print(f"Welcome, {userName}!")
+            print(f"Your username is: {userName}")
+            print("Please remember your username for login.\n")
+        
+        else:
+            # Manual password entry
+            while True:
+                password = input("Enter your password: ")
                 
-                # Ensure uniqueness
-                while userName in existing_users:
+                # Password strength check
+                if len(password) < 6:
+                    print("Password must be at least 6 characters long.")
+                    continue
+                
+                confirm_password = input("Confirm your password: ")
+
+                if password == confirm_password:
+                    print("Password confirmed ✓")
+                    
+                    # Generate unique username
+                    base_username = email.split("@")[0]
                     userName = base_username + ''.join(random.choices(string.ascii_letters + string.digits, k=2))
-                
-                writer.writerow({"email": email, "password": password, "userName": userName})
-                print("\n✓ Registration successful!")
-                print(f"Welcome, {userName}!")
-                print(f"Your username is: {userName}")
-                print("Please remember your username for login.\n")
-                break
-            else:
-                print("Passwords do not match. Please try again.")
+                    
+                    # Ensure uniqueness
+                    while userName in existing_users:
+                        userName = base_username + ''.join(random.choices(string.ascii_letters + string.digits, k=2))
+                    
+                    writer.writerow({"email": email, "password": password, "userName": userName})
+                    print("\n✓ Registration successful!")
+                    print(f"Welcome, {userName}!")
+                    print(f"Your username is: {userName}")
+                    print("Please remember your username for login.\n")
+                    break
+                else:
+                    print("Passwords do not match. Please try again.")
 
 def login():
     print("====== Login ======")
