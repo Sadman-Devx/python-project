@@ -17,7 +17,7 @@ def sign():
             for user in reader:
                 existing_users.add(user['userName'])
                 existing_emails.add(user['email'])
-    
+     
     with open("users.csv", "a", newline='') as file:
         writer = csv.DictWriter(file, fieldnames=["email", "password", "userName"])
         
